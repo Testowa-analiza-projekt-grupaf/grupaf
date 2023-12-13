@@ -3,7 +3,7 @@ title: "Analiza danych"
 subtitle: 'Czyszczenie danych'
 author: "Bartosz Bojarski, Mariana Uhar, Veronika Zhdamarova"
 date: "`r Sys.Date()`"
-output:
+output: html_document
   rmdformats::downcute:
     self_contained: true
     default_style: "light"
@@ -19,6 +19,46 @@ knitr::opts_chunk$set(cache = TRUE)
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 if(!require('tidyverse')) install.packages('tidyverse')
 library(tidyverse)
+install.packages("validate")
+install.packages("validatetools")
+install.packages("dcmodify")
+install.packages("errorlocate")
+install.packages("deductive")
+install.packages("VIM")
+install.packages("simputation")
+install.packages("lumberjack")
+install.packages("ISLR")
+install.packages("dlookr")
+install.packages("xts")
+install.packages("quantmod")
+install.packages("ROCR")
+install.packages("DMwR")
+install.packages("Information")
+install.packages("scorecard")
+
+library(dplyr) # ładuję biblioteki
+library(ggplot2)
+library(rmdformats)
+library(validate)
+library(validatetools)
+library(dcmodify)
+library(errorlocate)
+library(deductive)
+library(VIM)
+library(simputation)
+library(lumberjack)
+library(ISLR) 
+library(dlookr)
+library(xts)
+library(quantmod)
+library(ROCR)
+library(DMwR2)
+library(Information)
+library(scorecard)
+install.packages("naniar")
+install.packages("visdat")
+library(naniar)
+library(visdat)
 ```
 
 ```{r load-data, message=FALSE, warning=FALSE, include=FALSE}
@@ -26,5 +66,53 @@ library(readr)
 knitr::opts_chunk$set(echo = TRUE)
 dane<-read.csv(file="german_credit.csv",encoding ="UTF-8",header=TRUE,sep = ",")
 attach(dane)
+
+## Opis danych
+
+W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, która zaciągnęła kredyt w banku w walucie marki niemieckiej, oraz opisuje cechy dobrego i złego klienta bankowego, na podstawie których jest wyliczana zdolność kredytowa. Zbiór się składa z 1000 obserwacji, 20 zmiennych objaśniających oraz zmiennej objaśnianej (Creditability). Dane dotyczą okresu _________________----------------.
+```
+
+```{r german-credit}
+###Walidacja danych
+any_na(dane)
+n_miss(dane)
+prop_miss(dane)
+
+vis_miss(dane) #wykres
+miss_var_summary(dane)
+```
+
+```{r german-credit}
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("dlookr")
+library(ggplot2)
+library(dplyr)
+library(naniar)
+library(visdat)
+library(dlookr)
+library(htmltools)
+
+dane %>% 
+  bind_shadow() %>% 
+  ggplot(aes(x=Creditability, 
+             colour=Purpose_NA))+
+  geom_density()
+
+
+dane %>% 
+  ggplot(aes(x=Creditability,y=Purpose))+
+           geom_miss_point()
+```
+
+
+```{r credit-germany}
+#Sprawdzanie zmiennych
+dane
+if (`Age..years.` >= 0) {
+  cat("Założenie jest spełnione.")
+} else {
+  cat("Założenie nie jest spełnione.")
+}
 ```
 
