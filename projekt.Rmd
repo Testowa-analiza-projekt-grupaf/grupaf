@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Analiza danych"
 date: "`r Sys.Date()`"
 output:
   rmdformats::downcute:
@@ -10,7 +10,51 @@ output:
 
 
 ```{r setup, include=FALSE}
+install.packages("naniar")
+install.packages("visdat")
+install.packages("dlookr")
+library(naniar)
+library(visdat)
+library(dlookr)
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
+
+```
+
+
+```{r german-credit}
+#Walidacja danych
+any_na(german_credit)
+n_miss(german_credit)
+prop_miss(german_credit)
+
+vis_miss(german_credit)
+miss_var_summary(german_credit)
+```
+```{r german-credit}
+library(ggplot2)
+german_credit %>% 
+  bind_shadow() %>% 
+  ggplot(aes(x=Creditability, 
+             colour=Purpose_NA))+
+  geom_density()
+```
+```{r german-credit}
+# imputate_na z pakietu dlookr JEST OKEJ
+library(dlookr)
+
+german_credit %>% 
+  ggplot(aes(x=Creditability,y=Purpose))+
+           geom_miss_point()
+         
+```
+```{r german-credit}
+# Sprawdzanie zmiennych
+
+if (german_credit$Age (years) >= 0) { 
+  cat("Założenie jest spelnione.")
+} else {
+  cat("Założenie nie jest spełnione.")
+}
 ```
 
