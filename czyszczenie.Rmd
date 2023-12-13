@@ -1,0 +1,30 @@
+---
+title: "Analiza danych"
+subtitle: 'Czyszczenie danych'
+author: "Bartosz Bojarski, Mariana Uhar, Veronika Zhdamarova"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "light"
+    downcute_theme: "default"
+---
+
+
+```{r setup, include=FALSE}
+## Global options
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+if(!require('tidyverse')) install.packages('tidyverse')
+library(tidyverse)
+```
+
+```{r load-data, message=FALSE, warning=FALSE, include=FALSE}
+library(readr)
+knitr::opts_chunk$set(echo = TRUE)
+dane<-read.csv(file="german_credit.csv",encoding ="UTF-8",header=TRUE,sep = ",")
+attach(dane)
+```
+
