@@ -1,7 +1,9 @@
 ---
 title: "Analiza danych"
+subtitle: 'Czyszczenie danych'
+author: "Bartosz Bojarski, Mariana Uhar, Veronika Zhdamarova"
 date: "`r Sys.Date()`"
-output:
+output: html_document
   rmdformats::downcute:
     self_contained: true
     default_style: "light"
@@ -10,20 +12,49 @@ output:
 
 
 ```{r setup, include=FALSE}
-install.packages("naniar")
-install.packages("visdat")
-install.packages("dlookr")
 library(naniar)
 library(visdat)
 library(dlookr)
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(hrbrthemes)
+library(scorecard)
+library(knitr)
+library(tidyr)
+library(reshape2)
+library(RColorBrewer)
+library(GGally)
+library(caret)
+library(glmnet)
+library(boot)
+library(verification)
+library(colorspace)
+
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
 
 ```
 
 
+```{r load-data, message=FALSE, warning=FALSE, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+attach(german_credit)
+
+```
+
+
+## Opis danych
+
+W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, która zaciągnęła kredyt w banku w walucie marki niemieckiej, oraz opisuje cechy dobrego i złego klienta bankowego, na podstawie których jest wyliczana zdolność kredytowa. Zbiór się składa z 1000 obserwacji, 20 zmiennych objaśniających oraz zmiennej objaśnianej (Creditability).
+
+
+
 ```{r german-credit}
 #Walidacja danych
+german_credit <- german_credit1
 any_na(german_credit)
 n_miss(german_credit)
 prop_miss(german_credit)
@@ -31,30 +62,140 @@ prop_miss(german_credit)
 vis_miss(german_credit)
 miss_var_summary(german_credit)
 ```
+
+
 ```{r german-credit}
-library(ggplot2)
+
 german_credit %>% 
   bind_shadow() %>% 
   ggplot(aes(x=Creditability, 
              colour=Purpose_NA))+
   geom_density()
 ```
-```{r german-credit}
-# imputate_na z pakietu dlookr JEST OKEJ
-library(dlookr)
 
-german_credit %>% 
-  ggplot(aes(x=Creditability,y=Purpose))+
-           geom_miss_point()
-         
-```
+
+
 ```{r german-credit}
 # Sprawdzanie zmiennych
-
-if (german_credit$Age (years) >= 0) { 
-  cat("Założenie jest spelnione.")
+german_credit$Age >= 0
+if (german_credit$Age >= 0,"Założenie jest spelnione.") ####nie działa
 } else {
   cat("Założenie nie jest spełnione.")
 }
+
+hist(german_credit$Age)
+```
+
+
+```{r}
+#Sprawdzamy zmienne ilościowe
+ilosciowe_zmienne <- sapply(german_credit, is.numeric)
+print(ilosciowe_zmienne)
+```
+
+
+```{r}
+# WIZUALIZACJA #NIE DZIAŁA
+
+theme_set(theme_bw()) #???
+
+german_credit %>%
+  filter(Account_Balance=="3" & Employment>="3" & Previous_Credit<=1 & Age<=55 & Credits_at_this_Bank <=2) %>%
+ggplot(aes(x = Creditability)) +
+  geom_histogram(
+    aes(fill = Creditability)
+    ,bins = 10
+    ,color = 'black'
+  ) +
+  labs(title = 'Dobry klient')
+```
+```{r}
+ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)) +
+  geom_density(alpha=.25) +
+  labs(title = 'Gęstość rozkładu zdolności kredytowej')
+```
+
+```{r}
+
+glimpse(german_credit)
+german_credit$Creditability <- german_credit1$Creditability
+german_credit$Creditability <- as.factor(german_credit$Creditability)
+german_credit$Account_Balance <- factor(german_credit$Account_Balance, labels =c("< 0 DM", "0 <= ... <  200 DM", ">= 200 DM", "no checking account"))
+german_credit$Previous_Credit <- as.factor(german_credit$Previous_Credit)
+german_credit$Purpose <- as.factor(german_credit$Purpose)
+german_credit$Value_Savings <- as.factor(german_credit$Value_Savings)
+german_credit$Employment <- as.factor(german_credit$Employment)
+german_credit$Sex_Status <- as.factor(german_credit$Sex_Status)
+german_credit$Guarantors <- as.factor(german_credit$Guarantors)
+german_credit$Property <- as.factor(german_credit$Property)
+german_credit$Concurrent_Credits <- as.factor(german_credit$Concurrent_Credits)
+german_credit$Housing <- as.factor(german_credit$Housing)
+german_credit$Job <- as.factor(german_credit$Job)
+german_credit$Telephone <- as.factor(german_credit$Telephone)
+german_credit$Foreign_Worker <- as.factor(german_credit$Foreign_Worker)
+
+german_credit$Duration_of_Credit <- as.integer(german_credit$Duration_of_Credit)
+german_credit$Credit_Amount <- as.integer(german_credit$Credit_Amount)
+german_credit$Instalment_rate <- as.integer(german_credit$Instalment_rate)
+german_credit$Residence <- as.integer(german_credit$Residence)
+german_credit$Duration_of_Credit <- as.integer(german_credit$Duration_of_Credit)
+german_credit$Age <- as.integer(german_credit$Age)
+german_credit$Credits_at_this_Bank <- as.integer(german_credit$Credits_at_this_Bank)
+german_credit$Dependents <- as.integer(german_credit$Dependents)
+
+
+```
+
+
+```{r}
+#zrobic tabelke table.summary (by creditability)
+summary(german_credit)
+```
+
+
+```{r}
+#Wykres dla account balance
+
+ggplot(german_credit, aes(Account_Balance, ..count..)) + 
+  geom_bar(aes(fill = Creditability), position = "dodge") +
+  scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
+  labs(x = "Środki na koncie", y = "Ilość klientów", title = "Zalezność zdolności kredytowej od stanu konta bankowego")
+```
+
+
+```{r}
+ggplot(german_credit, aes(Employment, ..count..)) + 
+  geom_bar(aes(fill = Creditability), position = "dodge") +
+  scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
+  labs(x = "Zatrudnienie", y = "Ilość klientów", title = "Zalezność zdolności kredytowej od zatrudnienia")
+```
+
+
+```{r}
+ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
+  geom_bar(aes(fill = Creditability), position = "dodge") +
+  scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
+  labs(x = "Wcześniej zaciągnięte kredyty", y = "Ilość klientów", title = "Zalezność zdolności kredytowej od wcześniej zaciągniętych kredytów")
+```
+
+
+```{r}
+ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) + 
+  geom_bar(aes(fill = Creditability), position = "dodge") +
+  scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
+  labs(x = "Zaciągnięte kredyty w danym banku", y = "Ilość klientów", title = "Zalezność zdolności kredytowej od zaciągniętych kredytów w danym banku")
+```
+
+
+```{r}
+ggplot(german_credit, aes(Age)) +
+  geom_line(stat = "count", aes(color = factor(Creditability))) +
+  scale_color_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
+  labs(x = "Wiek klientów", y = "Ilość klientów", title = "Zależność zdolności kredytowej od wieku klientów")
+```
+```{r}
+# dobry i zły klient tabelka 
+
+
 ```
 
