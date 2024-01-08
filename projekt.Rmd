@@ -31,6 +31,7 @@ library(glmnet)
 library(boot)
 library(verification)
 library(colorspace)
+library(corrplot)
 
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
@@ -50,6 +51,8 @@ attach(german_credit)
 ```{r}
 # ZMieniamy dane na faktor oraz dodajemy opis dla wybranych zmiennych (jest potrzebne dla wykresów)
 
+
+german_credit <- german_credit1
 german_credit$Creditability <- german_credit1$Creditability
 german_credit$Creditability <- factor(german_credit$Creditability)
 german_credit$Account_Balance <- factor(german_credit$Account_Balance, labels =c("< 0 DM", "0 <= ... <  200 DM", ">= 200 DM", "brak konta bieżącego"))
@@ -188,15 +191,12 @@ ggplot(german_credit, aes(Age)) +
 ```
 
 
-```{r}
-#zrobic tabelke table.summary (by creditability)
 
 
-```
-
-
-```{r}
-#zrobić mapę korelacji (heat mapa)
+corrplot(cor(german_credit), method = "number", type = "upper", diag =FALSE)
+corr_matrix<-cor(german_credit)
+corrplot(corr_matrix, method="color")
 
 ```
+
 
