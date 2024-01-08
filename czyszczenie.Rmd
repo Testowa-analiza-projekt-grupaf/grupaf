@@ -11,7 +11,7 @@ output: html_document
 ---
 
 
-```{r setup, include=FALSE}
+````{r setup, include=FALSE}
 library(naniar)
 library(visdat)
 library(dlookr)
@@ -31,7 +31,6 @@ library(glmnet)
 library(boot)
 library(verification)
 library(colorspace)
-library(corrplot)
 
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
@@ -39,20 +38,18 @@ knitr::opts_chunk$set(cache = TRUE)
 ```
 
 
-
 ```{r load-data, message=FALSE, warning=FALSE, include=FALSE}
-
+library(readr)
 knitr::opts_chunk$set(echo = TRUE)
-attach(german_credit)
-
+dane<-read.csv(file="german_credit1.csv",encoding ="UTF-8",header=TRUE,sep = ",")
+attach(german_credit1)
 ```
+
 
 
 ```{r}
 # ZMieniamy dane na faktor oraz dodajemy opis dla wybranych zmiennych (jest potrzebne dla wykresów)
 
-
-german_credit <- german_credit1
 german_credit$Creditability <- german_credit1$Creditability
 german_credit$Creditability <- factor(german_credit$Creditability)
 german_credit$Account_Balance <- factor(german_credit$Account_Balance, labels =c("< 0 DM", "0 <= ... <  200 DM", ">= 200 DM", "brak konta bieżącego"))
@@ -81,36 +78,34 @@ glimpse(german_credit)
 
 ```
 
+
 ## Opis danych
 
-W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, która zaciągnęła kredyt w banku w walucie marki niemieckiej, oraz opisuje cechy dobrego i złego klienta bankowego, na podstawie których jest wyliczana zdolność kredytowa. Zbiór się składa z 1000 obserwacji, 20 zmiennych objaśniających oraz zmiennej objaśnianej (Creditability).
-
-
+W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, która zaciągnęła kredyt w banku w walucie marki niemieckiej, oraz opisuje cechy dobrego i złego klienta bankowego, na podstawie których jest wyliczana zdolność kredytowa. Zbiór się składa z 1000 obserwacji, 20 zmiennych objaśniających oraz zmiennej objaśnianej (Creditability). Dane dotyczą okresu _________________----------------.
+```
 
 ```{r german-credit}
-#Walidacja danych
+###Walidacja danych
 german_credit <- german_credit1
 any_na(german_credit)
 n_miss(german_credit)
 prop_miss(german_credit)
 
-vis_miss(german_credit)
+vis_miss(german_credit) #wykres
 miss_var_summary(german_credit)
 
 ```
 
 
 ```{r german-credit}
-# czy my mamy tutaj tylko purpose wsatwiać,czy może weżmiemy te zmienne które pojawiają się na wykresach niżej (account_balance, age, previous credits, credits at this bank, employment)
+
 german_credit %>% 
   bind_shadow() %>% 
   ggplot(aes(x=Creditability, 
-             colour=Purpose_NA))+ 
+             colour=Purpose_NA))+
   geom_density()
+
 ```
-
-
-
 
 ```{r german-credit}
 # Sprawdzanie czy zmienna age nie jest ujemna
@@ -119,25 +114,30 @@ hist(german_credit$Age)
 ```
 
 
+```{r credit-germany}
+#Sprawdzamy zmienną age (czy nie jest ujemna)
+
+hist(german_credit$Age)
+```
 
 ```{r}
-#Sprawdzamy zmienne ilościowe # dodałam tu tabele z typem zmiennych
+#Sprawdzamy zmienne ilościowe 
+
 Ilosciowe_zmienne <- sapply(german_credit, is.numeric)
 tabela1 <- data.frame(
   Ilosciowe_zmienne = ifelse(Ilosciowe_zmienne, "Ilościowa", "Jakościowa")
 )
 kable(tabela1, col.names = c("Nazwa zmiennej", "Typ zmiennej"), align="cc", caption = "Tabela 1. Podział zmiennych na jakościowe oraz ilościowe")
+
 ```
 
 
 ```{r}
-# nie wiem czy to nam trzeba (jak to interpretowac XD)
 ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)) +
   geom_density(alpha=.25) +
   labs(title = 'Gęstość rozkładu zdolności kredytowej')
+  
 ```
-
-
 
 
 ```{r}
@@ -159,7 +159,6 @@ ggplot(german_credit, aes(Employment, ..count..)) +
 
 
 ```{r}
-# TU JEST PROBLEM Z OPISAMI
 ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -181,22 +180,4 @@ ggplot(german_credit, aes(Age)) +
   scale_color_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
   labs(x = "Wiek klientów", y = "Ilość klientów", title = "Wykres 5. Zależność zdolności kredytowej od wieku klientów")
 ```
-
-
-
-```{r}
-# dobry i zły klient tabelka porównanie
-# dobry klient : age(<=55), credits_at_this_bank(<=2), account_balance(3), employment (>=3), previous_credit (<=1)
-#zły klient : age (>55), credits_at_this_bank(>2), account_balance(1), employment(<3), previous_credit(>1)
-```
-
-
-
-
-corrplot(cor(german_credit), method = "number", type = "upper", diag =FALSE)
-corr_matrix<-cor(german_credit)
-corrplot(corr_matrix, method="color")
-
-```
-
 
