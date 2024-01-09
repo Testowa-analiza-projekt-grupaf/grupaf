@@ -190,6 +190,19 @@ ggplot(german_credit, aes(Age)) +
 # dobry i zły klient tabelka porównanie
 # dobry klient : age(<=55), credits_at_this_bank(<=2), account_balance(3), employment (>=3), previous_credit (<=1)
 #zły klient : age (>55), credits_at_this_bank(>2), account_balance(1), employment(<3), previous_credit(>1)
+Dobry_klient <- data.frame(Wiek = "<= 55", Zaciągnięte_kredyty_w_danym_banku= "<= 2", Środki_na_koncie= ">= 200 DM", Zatrudnienie = ">= 3", Wcześniej_zaciągnięte_kredyty = "NIE WIEM")
+Zły_klient <- data.frame(Wiek = "> 55", Zaciągnięte_kredyty_w_danym_banku= "> 2", Środki_na_koncie= "< 0 DM", Zatrudnienie = "< 3", Wcześniej_zaciągnięte_kredyty = "NIE WIEM")
+Dobry_klient_transpose <- as.data.frame(t(Dobry_klient))
+Zły_klient_transpose <- as.data.frame(t(Zły_klient))
+tabela_klientow_transpose <- cbind(Dobry_klient_transpose, Zły_klient_transpose)
+rownames(tabela_klientow_transpose) <- c("Wiek", "Zaciągnięte kredyty w danym banku", "Środki na koncie", "Zatrudnienie", "Wcześniej zaciągnięte kredyty")
+kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), align="cc", caption = "Tabela 2. Porównywanie cech dobrego i złego klienta")
+```
+
+
+```{r}
+tabela_klientow_transpose <- rbind(Dobry_klient_transpose, Zły_klient_transpose)
+kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), align="cc", caption = "Tabela 2. Porównywanie cech dobrego i złego klienta")
 ```
 
 
