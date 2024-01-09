@@ -3,7 +3,11 @@ title: "Analiza danych"
 subtitle: 'Czyszczenie danych'
 author: "Bartosz Bojarski, Mariana Uhar, Veronika Zhdamarova"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
   rmdformats::downcute:
     self_contained: true
     default_style: "light"
@@ -48,7 +52,7 @@ attach(german_credit)
 ```
 
 
-```{r}
+```{r, include=FALSE}
 # ZMieniamy dane na faktor oraz dodajemy opis dla wybranych zmiennych (jest potrzebne dla wykresów)
 
 german_credit <- german_credit1
@@ -86,7 +90,7 @@ W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, k
 
 
 
-```{r german-credit}
+```{r german-credit, echo = FALSE}
 #Walidacja danych
 german_credit <- german_credit1
 any_na(german_credit)
@@ -99,7 +103,7 @@ miss_var_summary(german_credit)
 ```
 
 
-```{r german-credit}
+```{r german-credit, echo = FALSE}
 # czy my mamy tutaj tylko purpose wsatwiać,czy może weżmiemy te zmienne które pojawiają się na wykresach niżej (account_balance, age, previous credits, credits at this bank, employment)
 german_credit %>% 
   bind_shadow() %>% 
@@ -111,7 +115,7 @@ german_credit %>%
 
 
 
-```{r german-credit}
+```{r german-credit, echo = FALSE}
 # Sprawdzanie czy zmienna age nie jest ujemna
 
 hist(german_credit$Age)
@@ -119,7 +123,7 @@ hist(german_credit$Age)
 
 
 
-```{r}
+```{r, echo = FALSE}
 #Sprawdzamy zmienne ilościowe # dodałam tu tabele z typem zmiennych
 Ilosciowe_zmienne <- sapply(german_credit, is.numeric)
 tabela1 <- data.frame(
@@ -139,7 +143,7 @@ ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)
 
 
 
-```{r}
+```{r, echo = FALSE}
 #Wykres dla account balance
 
 ggplot(german_credit, aes(Account_Balance, ..count..)) + 
@@ -149,7 +153,7 @@ ggplot(german_credit, aes(Account_Balance, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Employment, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -157,7 +161,7 @@ ggplot(german_credit, aes(Employment, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -165,7 +169,7 @@ ggplot(german_credit, aes(Previous_Credit, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -173,7 +177,7 @@ ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Age)) +
   geom_line(stat = "count", aes(color = factor(Creditability))) +
   scale_color_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -182,21 +186,21 @@ ggplot(german_credit, aes(Age)) +
 
 
 
-```{r}
+```{r, echo = FALSE}
 # dobry i zły klient tabelka porównanie
 # dobry klient : age(<=55), credits_at_this_bank(<=2), account_balance(3), employment (>=3), previous_credit (<=1)
 #zły klient : age (>55), credits_at_this_bank(>2), account_balance(1), employment(<3), previous_credit(>1)
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 #zrobic tabelke table.summary (by creditability)
 
 
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 #mapa korelacji (heat mapa)
 
 corrplot(cor(german_credit), method = "number", type = "upper", diag =FALSE)
