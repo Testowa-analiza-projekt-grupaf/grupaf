@@ -41,6 +41,7 @@ library(qwraps2)
 library(stats)
 library(dplyr)
 library(kableExtra)
+library(ggstatsplot)
 
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
@@ -242,7 +243,7 @@ kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), a
 ```
 
 
-<<<<<<< HEAD
+
 
 
 ```{r}
@@ -256,10 +257,10 @@ kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), a
             "Kwartyl górny"= ~ quantile(Credit_Amount,0.75),
             "Średnia"= ~ round(mean(Credit_Amount),2),
             "Odch. std."= ~ round(sd(Credit_Amount),2),
-            "IQR"= ~ round(iqr(Credit_Amount),2),
-            "Odchylenie ćwiartkowe"=~round(iqr(Credit_Amount)/2,2),
+            "IQR"= ~ round(IQR(Credit_Amount),2),
+            "Odchylenie ćwiartkowe"=~round(IQR(Credit_Amount)/2,2),
             "Odch. std. w %"=~round((sd(Credit_Amount)/mean(Credit_Amount)),2),
-            "Odch. ćwiartkowe w %"=~round((iqr(Credit_Amount)/median(Credit_Amount)),2),
+            "Odch. ćwiartkowe w %"=~round((IQR(Credit_Amount)/median(Credit_Amount)),2),
             "Skośność"=~round(skew(Credit_Amount),2),
             "Kurtoza"=~round(kurtosi(Credit_Amount),2)
             ))
@@ -285,10 +286,10 @@ raport <-
             "Kwartyl górny"= ~ quantile(Age,0.75),
             "Średnia"= ~ round(mean(Age),2),
             "Odch. std."= ~ round(sd(Age),2),
-            "IQR"= ~ round(iqr(Age),2),
-            "Odchylenie ćwiartkowe"=~round(iqr(Age)/2,2),
+            "IQR"= ~ round(IQR(Age),2),
+            "Odchylenie ćwiartkowe"=~round(IQR(Age)/2,2),
             "Odch. std. w %"=~round((sd(Age)/mean(Age)),2),
-            "Odch. ćwiartkowe w %"=~round((iqr(Age)/median(Age)),2),
+            "Odch. ćwiartkowe w %"=~round((IQR(Age)/median(Age)),2),
             "Skośność"=~round(skew(Age),2),
             "Kurtoza"=~round(kurtosi(Age),2)
             ))
@@ -313,10 +314,10 @@ raport <-
             "Kwartyl górny"= ~ quantile(Duration_of_Credit,0.75),
             "Średnia"= ~ round(mean(Duration_of_Credit),2),
             "Odch. std."= ~ round(sd(Duration_of_Credit),2),
-            "IQR"= ~ round(iqr(Duration_of_Credit),2),
-            "Odchylenie ćwiartkowe"=~round(iqr(Duration_of_Credit)/2,2),
+            "IQR"= ~ round(IQR(Duration_of_Credit),2),
+            "Odchylenie ćwiartkowe"=~round(IQR(Duration_of_Credit)/2,2),
             "Odch. std. w %"=~round((sd(Duration_of_Credit)/mean(Duration_of_Credit)),2),
-            "Odch. ćwiartkowe w %"=~round((iqr(Duration_of_Credit)/median(Duration_of_Credit)),2),
+            "Odch. ćwiartkowe w %"=~round((IQR(Duration_of_Credit)/median(Duration_of_Credit)),2),
             "Skośność"=~round(skew(Duration_of_Credit),2),
             "Kurtoza"=~round(kurtosi(Duration_of_Credit),2)
             ))
@@ -347,3 +348,62 @@ corrplot(corr_matrix, method="color")
 ```
 
 
+#Pytania badawcze
+Czy zdolność kredytowa zależy od wielkości kredytu?
+Czy zdolność kredytowa zależy od wieku?
+Czy zdolność kredytowa zależy od liczby przepracowanych lat?
+Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?
+
+```{r}
+set.seed(123)
+
+ggbetweenstats(
+  data = german_credit,
+  x = Creditability,
+  y = Credit_Amount,
+  title = "Czy zdolność kredytowa zależy od wielkości kredytu?"
+)
+```
+
+###Średnia wysokość pożyczki jest istotnie różna dla różnego poziomu ryzyka kredytowego
+
+```{r}
+set.seed(123)
+
+ggbetweenstats(
+  data = german_credit,
+  x = Creditability,
+  y = Age,
+  title = "Czy zdolność kredytowa zależy od wieku?"
+)
+```
+
+###Średni wiek jest istotnie różny dla różnego poziomu ryzyka kredytowego
+
+
+
+```{r}
+set.seed(123)
+
+ggbarstats(
+  data = german_credit,
+  x = Creditability,
+  y = Employment,
+  title = "Czy zdolność kredytowa zależy od liczby przepracowanych lat?"
+  )
+```
+
+
+###Liczba przepracownaych lat istotnie wpływa na ryzyko kredytowe.
+
+```{r}
+set.seed(123)
+
+ggpiestats(
+  data = german_credit,
+  x = Creditability,
+  y = Credits_at_this_Bank,
+  title = "Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?"
+  )
+```
+###P-value wynosi 0,45, więc zmienna "Ilość posiadanych kredytów w tym banku" nie jest istotna, co widać na wykresach: możemy zaobserwowac, że zdlonośc kredytowa we wszystkich czterech przypadkach znajduje się na bardzo zbliżonym poziomie.
