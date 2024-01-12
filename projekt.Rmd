@@ -60,6 +60,7 @@ attach(german_credit)
 ```{r, include=FALSE}
 # ZMieniamy dane na faktor oraz dodajemy opis dla wybranych zmiennych (jest potrzebne dla wykresów)
 
+
 german_credit <- german_credit1
 german_credit$Creditability <- german_credit1$Creditability
 german_credit$Creditability <- factor(german_credit$Creditability)
@@ -197,7 +198,12 @@ ggplot(german_credit, aes(Employment, ..count..)) +
 ```
 
 
+<<<<<<< HEAD
 ```{r, echo = FALSE}
+=======
+```{r}
+# TU JEST PROBLEM Z OPISAMI
+>>>>>>> 69bc84c26d12c32aad570688205f11b35ee7ed60
 ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -236,6 +242,7 @@ kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), a
 ```
 
 
+<<<<<<< HEAD
 
 
 ```{r}
@@ -329,6 +336,10 @@ knitr::kable(tabela,
 #mapa korelacji (heat mapa)
 
 german_credit <- german_credit1
+=======
+
+
+>>>>>>> 69bc84c26d12c32aad570688205f11b35ee7ed60
 corrplot(cor(german_credit), method = "number", type = "upper", diag =FALSE)
 corr_matrix<-cor(german_credit)
 corrplot(corr_matrix, method="color")
