@@ -3,7 +3,11 @@ title: "Analiza danych"
 subtitle: 'Czyszczenie danych'
 author: "Bartosz Bojarski, Mariana Uhar, Veronika Zhdamarova"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
   rmdformats::downcute:
     self_contained: true
     default_style: "light"
@@ -32,6 +36,11 @@ library(boot)
 library(verification)
 library(colorspace)
 library(corrplot)
+library(psych)
+library(qwraps2)
+library(stats)
+library(dplyr)
+library(kableExtra)
 
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
@@ -48,7 +57,7 @@ attach(german_credit)
 ```
 
 
-```{r}
+```{r, include=FALSE}
 # ZMieniamy dane na faktor oraz dodajemy opis dla wybranych zmiennych (jest potrzebne dla wykresów)
 
 
@@ -87,21 +96,22 @@ W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, k
 
 
 
-```{r german-credit}
+```{r german-credit, echo = FALSE}
 #Walidacja danych
 german_credit <- german_credit1
 any_na(german_credit)
-n_miss(german_credit)
+n_miss(german_credit) # CZY ZOSTAWIC
 prop_miss(german_credit)
 
 vis_miss(german_credit)
 miss_var_summary(german_credit)
 
+#nie mamy braków danych
 ```
 
 
-```{r german-credit}
-# czy my mamy tutaj tylko purpose wsatwiać,czy może weżmiemy te zmienne które pojawiają się na wykresach niżej (account_balance, age, previous credits, credits at this bank, employment)
+```{r german-credit, echo = FALSE}
+
 german_credit %>% 
   bind_shadow() %>% 
   ggplot(aes(x=Creditability, 
@@ -112,21 +122,49 @@ german_credit %>%
 
 
 
-```{r german-credit}
+```{r german-credit, echo = FALSE}
 # Sprawdzanie czy zmienna age nie jest ujemna
 
-hist(german_credit$Age)
+hist(german_credit$Age) #zmienić nazwę wykresu
 ```
 
 
 
-```{r}
+```{r, echo = FALSE}
 #Sprawdzamy zmienne ilościowe # dodałam tu tabele z typem zmiennych
+german_credit <- german_credit1
+german_credit$Creditability <- german_credit1$Creditability
+german_credit$Creditability <- factor(german_credit$Creditability)
+german_credit$Account_Balance <- factor(german_credit$Account_Balance, labels =c("< 0 DM", "0 <= ... <  200 DM", ">= 200 DM", "brak konta bieżącego"))
+german_credit$Previous_Credit <- factor(german_credit$Previous_Credit, labels =c("brak kredytów", "spł. term.", "spł. term. do teraz", "opóźnienie w spł.", "konto krytyczne"))
+german_credit$Purpose <- factor(german_credit$Purpose)
+german_credit$Value_Savings <- factor(german_credit$Value_Savings)
+german_credit$Employment <- factor(german_credit$Employment, labels =c("bezrobotny/a", "< 1 rok stażu pracy", "1 <= ... < 4 lat", " 4 <= ... < 7 lat", ">= 7 lat"))
+german_credit$Sex_Status <- factor(german_credit$Sex_Status)
+german_credit$Guarantors <- factor(german_credit$Guarantors)
+german_credit$Property <- factor(german_credit$Property)
+german_credit$Concurrent_Credits <- factor(german_credit$Concurrent_Credits)
+german_credit$Housing <- factor(german_credit$Housing)
+german_credit$Job <- as.factor(german_credit$Job)
+german_credit$Telephone <- factor(german_credit$Telephone)
+german_credit$Foreign_Worker <- factor(german_credit$Foreign_Worker)
+
+german_credit$Duration_of_Credit <- as.integer(german_credit$Duration_of_Credit)
+german_credit$Credit_Amount <- as.integer(german_credit$Credit_Amount)
+german_credit$Instalment_rate <- as.integer(german_credit$Instalment_rate)
+german_credit$Residence <- as.integer(german_credit$Residence)
+german_credit$Duration_of_Credit <- as.integer(german_credit$Duration_of_Credit)
+german_credit$Age <- as.integer(german_credit$Age, labels = c("Wiek w latach"))
+german_credit$Credits_at_this_Bank <- as.integer(german_credit$Credits_at_this_Bank, labels =c("Liczba istniejących kredytów w tym banku"))
+german_credit$Dependents <- as.integer(german_credit$Dependents)
+
 Ilosciowe_zmienne <- sapply(german_credit, is.numeric)
 tabela1 <- data.frame(
   Ilosciowe_zmienne = ifelse(Ilosciowe_zmienne, "Ilościowa", "Jakościowa")
 )
 kable(tabela1, col.names = c("Nazwa zmiennej", "Typ zmiennej"), align="cc", caption = "Tabela 1. Podział zmiennych na jakościowe oraz ilościowe")
+
+#PRZETŁUMACZYC NAZWY + DODAC KOD
 ```
 
 
@@ -135,12 +173,14 @@ kable(tabela1, col.names = c("Nazwa zmiennej", "Typ zmiennej"), align="cc", capt
 ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)) +
   geom_density(alpha=.25) +
   labs(title = 'Gęstość rozkładu zdolności kredytowej')
+
+#NA RAZIE NIE INTERPRETUJEMY
 ```
 
 
 
 
-```{r}
+```{r, echo = FALSE}
 #Wykres dla account balance
 
 ggplot(german_credit, aes(Account_Balance, ..count..)) + 
@@ -150,7 +190,7 @@ ggplot(german_credit, aes(Account_Balance, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Employment, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -158,8 +198,12 @@ ggplot(german_credit, aes(Employment, ..count..)) +
 ```
 
 
+<<<<<<< HEAD
+```{r, echo = FALSE}
+=======
 ```{r}
 # TU JEST PROBLEM Z OPISAMI
+>>>>>>> 69bc84c26d12c32aad570688205f11b35ee7ed60
 ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -167,7 +211,7 @@ ggplot(german_credit, aes(Previous_Credit, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -175,7 +219,7 @@ ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) +
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 ggplot(german_credit, aes(Age)) +
   geom_line(stat = "count", aes(color = factor(Creditability))) +
   scale_color_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -184,15 +228,118 @@ ggplot(german_credit, aes(Age)) +
 
 
 
-```{r}
+```{r, echo = FALSE}
 # dobry i zły klient tabelka porównanie
 # dobry klient : age(<=55), credits_at_this_bank(<=2), account_balance(3), employment (>=3), previous_credit (<=1)
 #zły klient : age (>55), credits_at_this_bank(>2), account_balance(1), employment(<3), previous_credit(>1)
+Dobry_klient <- data.frame(Wiek = "<= 55", Zaciągnięte_kredyty_w_danym_banku= "<= 2", Środki_na_koncie= ">= 200 DM", Zatrudnienie = ">= 3", Wcześniej_zaciągnięte_kredyty = "Brak kredytów/ Spłata w terminie")
+Zły_klient <- data.frame(Wiek = "> 55", Zaciągnięte_kredyty_w_danym_banku= "> 2", Środki_na_koncie= "< 0 DM", Zatrudnienie = "< 3", Wcześniej_zaciągnięte_kredyty = "Opóźnienia w spłacie/konto krytyczne")
+Dobry_klient_transpose <- as.data.frame(t(Dobry_klient))
+Zły_klient_transpose <- as.data.frame(t(Zły_klient))
+tabela_klientow_transpose <- cbind(Dobry_klient_transpose, Zły_klient_transpose)
+rownames(tabela_klientow_transpose) <- c("Wiek", "Zaciągnięte kredyty w danym banku", "Środki na koncie", "Zatrudnienie", "Wcześniej zaciągnięte kredyty")
+kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), align="cc", caption = "Tabela 2. Porównywanie cech dobrego i złego klienta")
+```
+
+
+<<<<<<< HEAD
+
+
+```{r}
+
+  raport <-
+  list("Zdolność kredytowa" =
+       list("Min"= ~ min(Credit_Amount),
+            "Max"= ~ max(Credit_Amount),
+            "Kwartyl dolny"= ~ quantile(Credit_Amount,0.25),
+            "Mediana"= ~ round(median(Credit_Amount),2),
+            "Kwartyl górny"= ~ quantile(Credit_Amount,0.75),
+            "Średnia"= ~ round(mean(Credit_Amount),2),
+            "Odch. std."= ~ round(sd(Credit_Amount),2),
+            "IQR"= ~ round(iqr(Credit_Amount),2),
+            "Odchylenie ćwiartkowe"=~round(iqr(Credit_Amount)/2,2),
+            "Odch. std. w %"=~round((sd(Credit_Amount)/mean(Credit_Amount)),2),
+            "Odch. ćwiartkowe w %"=~round((iqr(Credit_Amount)/median(Credit_Amount)),2),
+            "Skośność"=~round(skew(Credit_Amount),2),
+            "Kurtoza"=~round(kurtosi(Credit_Amount),2)
+            ))
+tabela<-summary_table(german_credit, summaries = raport, by = c("Creditability"))
+
+knitr::kable(tabela,
+  digits = 2,
+  align = "lcc",
+  caption="Tabela 3. Kwota zaciągniętego kredytu wg zdolności kredytowej.",
+  col.names = c("Statystyka","0", "1"))
+```
+
+### MAX MIN ŚREDNIA
+
+
+```{r}
+raport <-
+  list("Zdolność kredytowa" =
+       list("Min"= ~ min(Age),
+            "Max"= ~ max(Age),
+            "Kwartyl dolny"= ~ quantile(Age,0.25),
+            "Mediana"= ~ round(median(Age),2),
+            "Kwartyl górny"= ~ quantile(Age,0.75),
+            "Średnia"= ~ round(mean(Age),2),
+            "Odch. std."= ~ round(sd(Age),2),
+            "IQR"= ~ round(iqr(Age),2),
+            "Odchylenie ćwiartkowe"=~round(iqr(Age)/2,2),
+            "Odch. std. w %"=~round((sd(Age)/mean(Age)),2),
+            "Odch. ćwiartkowe w %"=~round((iqr(Age)/median(Age)),2),
+            "Skośność"=~round(skew(Age),2),
+            "Kurtoza"=~round(kurtosi(Age),2)
+            ))
+tabela<-summary_table(german_credit, summaries = raport, by = c("Creditability"))
+
+knitr::kable(tabela,
+  digits = 2,
+  align = "lcc",
+  caption="Tabela 4. Wiek wg zdolności kredytowej.",
+  col.names = c("Statystyka","0", "1"))
 ```
 
 
 
+```{r}
+raport <-
+  list("Zdolność kredytowa" =
+       list("Min"= ~ min(Duration_of_Credit),
+            "Max"= ~ max(Duration_of_Credit),
+            "Kwartyl dolny"= ~ quantile(Duration_of_Credit,0.25),
+            "Mediana"= ~ round(median(Duration_of_Credit),2),
+            "Kwartyl górny"= ~ quantile(Duration_of_Credit,0.75),
+            "Średnia"= ~ round(mean(Duration_of_Credit),2),
+            "Odch. std."= ~ round(sd(Duration_of_Credit),2),
+            "IQR"= ~ round(iqr(Duration_of_Credit),2),
+            "Odchylenie ćwiartkowe"=~round(iqr(Duration_of_Credit)/2,2),
+            "Odch. std. w %"=~round((sd(Duration_of_Credit)/mean(Duration_of_Credit)),2),
+            "Odch. ćwiartkowe w %"=~round((iqr(Duration_of_Credit)/median(Duration_of_Credit)),2),
+            "Skośność"=~round(skew(Duration_of_Credit),2),
+            "Kurtoza"=~round(kurtosi(Duration_of_Credit),2)
+            ))
+tabela<-summary_table(german_credit, summaries = raport, by = c("Creditability"))
 
+knitr::kable(tabela,
+  digits = 2,
+  align = "lcc",
+  caption="Tabela 5. Długość trwania kredytu wg zdolności kredytowej.",
+  col.names = c("Statystyka","0", "1"))
+
+```
+
+### MIESIĘCY
+
+```{r, echo = FALSE}
+#mapa korelacji (heat mapa)
+
+german_credit <- german_credit1
+=======
+
+
+>>>>>>> 69bc84c26d12c32aad570688205f11b35ee7ed60
 corrplot(cor(german_credit), method = "number", type = "upper", diag =FALSE)
 corr_matrix<-cor(german_credit)
 corrplot(corr_matrix, method="color")
