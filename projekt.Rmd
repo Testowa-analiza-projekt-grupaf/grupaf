@@ -42,6 +42,7 @@ library(stats)
 library(dplyr)
 library(kableExtra)
 library(ggstatsplot)
+library(gtsummary)
 
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
@@ -59,8 +60,6 @@ attach(german_credit)
 
 
 ```{r, include=FALSE}
-# ZMieniamy dane na faktor oraz dodajemy opis dla wybranych zmiennych (jest potrzebne dla wykresów)
-
 
 german_credit <- german_credit1
 german_credit$Creditability <- german_credit1$Creditability
@@ -91,11 +90,13 @@ glimpse(german_credit)
 
 ```
 
-## Opis danych
+## Wprowadzenie
 
 W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, która zaciągnęła kredyt w banku w walucie marki niemieckiej, oraz opisuje cechy dobrego i złego klienta bankowego, na podstawie których jest wyliczana zdolność kredytowa. Zbiór się składa z 1000 obserwacji, 20 zmiennych objaśniających oraz zmiennej objaśnianej (Creditability).
 
 
+
+## Czyszczenie danych
 
 ```{r german-credit, echo = FALSE}
 #Walidacja danych
@@ -107,9 +108,10 @@ prop_miss(german_credit)
 vis_miss(german_credit)
 miss_var_summary(german_credit)
 
-#nie mamy braków danych
 ```
 
+
+Walidacja danych pokazuje, że nie mamy żadnych braków oraz dane nie wymagają czyszczenia.
 
 ```{r german-credit, echo = FALSE}
 
@@ -117,18 +119,23 @@ german_credit %>%
   bind_shadow() %>% 
   ggplot(aes(x=Creditability, 
              colour=Purpose_NA))+ 
-  geom_density()
+  geom_density() +
+  labs(x = "Zdolność kredytowa",
+       colour = "Cel kredytu NA",
+       y = "Gęstość",
+       title = "Wykres 1. Brak danych ze względu na cel kredytu")
 ```
 
-
+Nie mamy braku danych ze względu na zaciągniecia kredytu.
 
 
 ```{r german-credit, echo = FALSE}
 # Sprawdzanie czy zmienna age nie jest ujemna
 
-hist(german_credit$Age) #zmienić nazwę wykresu
+hist(german_credit$Age, main = "Wykres 2. Wiek klientów") 
 ```
 
+Według otrzymanych wartości możemy stwierdzić, że nie mamy ujemnej wartości zmiennej AGE.
 
 
 ```{r, echo = FALSE}
@@ -168,17 +175,18 @@ kable(tabela1, col.names = c("Nazwa zmiennej", "Typ zmiennej"), align="cc", capt
 #PRZETŁUMACZYC NAZWY + DODAC KOD
 ```
 
+Tabela 1 pokazuje podział zmiennych na jakościowe i ilościowe.
 
 ```{r}
 # nie wiem czy to nam trzeba (jak to interpretowac XD)
 ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)) +
   geom_density(alpha=.25) +
-  labs(title = 'Gęstość rozkładu zdolności kredytowej')
+  labs(title = 'Gęstość rozkładu zdolności kredytowej') 
 
-#NA RAZIE NIE INTERPRETUJEMY
+#NA RAZIE NIE INTERPRETUJEMY JEŻELI ZOSTAWIAMY TO POZMIENIAĆ NR WYKRESÓW
 ```
 
-
+## Wizualizacja danych
 
 
 ```{r, echo = FALSE}
@@ -187,47 +195,48 @@ ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)
 ggplot(german_credit, aes(Account_Balance, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
-  labs(x = "Środki na koncie", y = "Ilość klientów", title = "Wykres 1. Zalezność zdolności kredytowej od stanu konta bankowego")
+  labs(x = "Środki na koncie", y = "Ilość klientów", title = "Wykres 3. Zalezność zdolności kredytowej od stanu konta bankowego")
 ```
 
+Na wykresie zależności zdolności kredytowej od stanu konta bankowego można zobaczyć nieoczywiste wyniki, ponieważ na wykres miała wpływ nie tylko jedna zmienna, a więcej. Według wyników z wykresu widać, że stan konta bankowego nie ma istotnego znaczenia co do zdolności kredytowej.
 
 ```{r, echo = FALSE}
 ggplot(german_credit, aes(Employment, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
-  labs(x = "Zatrudnienie", y = "Ilość klientów", title = "Wykres 2. Zalezność zdolności kredytowej od zatrudnienia")
+  labs(x = "Zatrudnienie", y = "Ilość klientów", title = "Wykres 4. Zalezność zdolności kredytowej od zatrudnienia")
 ```
 
+Na wykresie wyżej również pozostałe zmienne wpływają na wyniki. Zależność zdolności kredytowej od stażu pracy nie jest współmiernie rosnąca.
 
-<<<<<<< HEAD
-```{r, echo = FALSE}
-=======
+
 ```{r}
-# TU JEST PROBLEM Z OPISAMI
->>>>>>> 69bc84c26d12c32aad570688205f11b35ee7ed60
 ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
-  labs(x = "Wcześniej zaciągnięte kredyty", y = "Ilość klientów", title = "Wykres 3. Zalezność zdolności kredytowej od wcześniej zaciągniętych kredytów")
+  labs(x = "Wcześniej zaciągnięte kredyty", y = "Ilość klientów", title = "Wykres 5. Zalezność zdolności kredytowej od wcześniej zaciągniętych kredytów")
 ```
 
+W tym wypadku najwięcej klientów ma zdolność kedytową wtedy ,gdy spłaty kredytu są terminowe, ale według wykresu również gdy konto jest krytyczne, czyli wtedy gdy klient ma zoobowiązanie jeszcze w innym banku.
 
 ```{r, echo = FALSE}
 ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
-  labs(x = "Zaciągnięte kredyty w danym banku", y = "Ilość klientów", title = "Wykres 4. Zalezność zdolności kredytowej od zaciągniętych kredytów w danym banku")
+  labs(x = "Zaciągnięte kredyty w danym banku", y = "Ilość klientów", title = "Wykres 6. Zalezność zdolności kredytowej od zaciągniętych kredytów w danym banku")
 ```
+
+Najwięcej klientów ma zdolność kredytową przy jednym kreddycie. Im większa ilość kredytów tym mniejsza ilość klientów. Przy 4 zaciągnietych kredytach ilość klientów jest praktycznie zerowa.
 
 
 ```{r, echo = FALSE}
 ggplot(german_credit, aes(Age)) +
   geom_line(stat = "count", aes(color = factor(Creditability))) +
   scale_color_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
-  labs(x = "Wiek klientów", y = "Ilość klientów", title = "Wykres 5. Zależność zdolności kredytowej od wieku klientów")
+  labs(x = "Wiek klientów", y = "Ilość klientów", title = "Wykres 7. Zależność zdolności kredytowej od wieku klientów")
 ```
 
-
+Największa zdolność kredytowa jest między 25, a 45 rokiem życia. Od ok. 40 roku życia spada, z małymi odbiciami i jednym większy odbiciem około roku 65.
 
 ```{r, echo = FALSE}
 # dobry i zły klient tabelka porównanie
@@ -242,168 +251,148 @@ rownames(tabela_klientow_transpose) <- c("Wiek", "Zaciągnięte kredyty w danym 
 kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), align="cc", caption = "Tabela 2. Porównywanie cech dobrego i złego klienta")
 ```
 
+W tej tabeli mamy porównanie dobrego i złego klienta według ich cech. Dobry klientem jest ten, który wiekiem sięga do 55 roku życia i liczba zaciągniętych kredytów nie przekracza 2. Jego środki na koncie są równe, bądź 200 przekraczają niemieckich marek. Również świadczy o tym jego zatrudnnie, które powinno być większę lub równe 3, co pokazuje jegop doświdcxzenie zawodowe. Pozytywną cechą są nie zaciągane wcześniej kredyty lub terminowe spłaty ich. Złym klientem jest osoba  starsza niż 55 lat, co też udowadnia nam poprzedni wykres. Również większa ilość zaciągnietych kredytów jest negatywna i ujemne środki na koncie. 
+
+## Analiza opisowa
 
 
+```{r, echo = FALSE}
 
-
-```{r}
-
-  raport <-
-  list("Zdolność kredytowa" =
-       list("Min"= ~ min(Credit_Amount),
-            "Max"= ~ max(Credit_Amount),
-            "Kwartyl dolny"= ~ quantile(Credit_Amount,0.25),
-            "Mediana"= ~ round(median(Credit_Amount),2),
-            "Kwartyl górny"= ~ quantile(Credit_Amount,0.75),
-            "Średnia"= ~ round(mean(Credit_Amount),2),
-            "Odch. std."= ~ round(sd(Credit_Amount),2),
-            "IQR"= ~ round(IQR(Credit_Amount),2),
-            "Odchylenie ćwiartkowe"=~round(IQR(Credit_Amount)/2,2),
-            "Odch. std. w %"=~round((sd(Credit_Amount)/mean(Credit_Amount)),2),
-            "Odch. ćwiartkowe w %"=~round((IQR(Credit_Amount)/median(Credit_Amount)),2),
-            "Skośność"=~round(skew(Credit_Amount),2),
-            "Kurtoza"=~round(kurtosi(Credit_Amount),2)
-            ))
-tabela<-summary_table(german_credit, summaries = raport, by = c("Creditability"))
-
-knitr::kable(tabela,
-  digits = 2,
-  align = "lcc",
-  caption="Tabela 3. Kwota zaciągniętego kredytu wg zdolności kredytowej.",
-  col.names = c("Statystyka","0", "1"))
-```
-
-### MAX MIN ŚREDNIA
-
-
-```{r}
-raport <-
-  list("Zdolność kredytowa" =
-       list("Min"= ~ min(Age),
-            "Max"= ~ max(Age),
-            "Kwartyl dolny"= ~ quantile(Age,0.25),
-            "Mediana"= ~ round(median(Age),2),
-            "Kwartyl górny"= ~ quantile(Age,0.75),
-            "Średnia"= ~ round(mean(Age),2),
-            "Odch. std."= ~ round(sd(Age),2),
-            "IQR"= ~ round(IQR(Age),2),
-            "Odchylenie ćwiartkowe"=~round(IQR(Age)/2,2),
-            "Odch. std. w %"=~round((sd(Age)/mean(Age)),2),
-            "Odch. ćwiartkowe w %"=~round((IQR(Age)/median(Age)),2),
-            "Skośność"=~round(skew(Age),2),
-            "Kurtoza"=~round(kurtosi(Age),2)
-            ))
-tabela<-summary_table(german_credit, summaries = raport, by = c("Creditability"))
-
-knitr::kable(tabela,
-  digits = 2,
-  align = "lcc",
-  caption="Tabela 4. Wiek wg zdolności kredytowej.",
-  col.names = c("Statystyka","0", "1"))
-```
-
-
-
-```{r}
-raport <-
-  list("Zdolność kredytowa" =
-       list("Min"= ~ min(Duration_of_Credit),
-            "Max"= ~ max(Duration_of_Credit),
-            "Kwartyl dolny"= ~ quantile(Duration_of_Credit,0.25),
-            "Mediana"= ~ round(median(Duration_of_Credit),2),
-            "Kwartyl górny"= ~ quantile(Duration_of_Credit,0.75),
-            "Średnia"= ~ round(mean(Duration_of_Credit),2),
-            "Odch. std."= ~ round(sd(Duration_of_Credit),2),
-            "IQR"= ~ round(IQR(Duration_of_Credit),2),
-            "Odchylenie ćwiartkowe"=~round(IQR(Duration_of_Credit)/2,2),
-            "Odch. std. w %"=~round((sd(Duration_of_Credit)/mean(Duration_of_Credit)),2),
-            "Odch. ćwiartkowe w %"=~round((IQR(Duration_of_Credit)/median(Duration_of_Credit)),2),
-            "Skośność"=~round(skew(Duration_of_Credit),2),
-            "Kurtoza"=~round(kurtosi(Duration_of_Credit),2)
-            ))
-tabela<-summary_table(german_credit, summaries = raport, by = c("Creditability"))
-
-knitr::kable(tabela,
-  digits = 2,
-  align = "lcc",
-  caption="Tabela 5. Długość trwania kredytu wg zdolności kredytowej.",
-  col.names = c("Statystyka","0", "1"))
+german_credit %>%
+  select(Credit_Amount,Creditability) %>%
+  tbl_summary(
+    by=Creditability,
+    type = all_continuous() ~ "continuous2",
+    statistic = all_continuous() ~ c(
+      "{N_nonmiss}","{mean}","{sd}",
+      "{median} ({p25}, {p75})",
+      "{min}, {max}"),
+    missing = "no",
+    label = Credit_Amount ~ "Kwota zaciągniętego kredytu") %>%
+  modify_header(label ~ "**Zmienna**") %>%
+  modify_caption("**Tabela 3. Kwota zaciągniętego kredytu wg zdolności kredytowej.**") %>%
+  bold_labels() %>% 
+  add_p(pvalue_fun = ~ style_pvalue(.x, digits = 2))
 
 ```
 
-### MIESIĘCY
+INTERPRETACJA
+
+
+```{r, echo = FALSE}
+
+german_credit %>%
+  select(Age,Creditability) %>%
+  tbl_summary(
+    by=Creditability,
+    type = all_continuous() ~ "continuous2",
+    statistic = all_continuous() ~ c(
+      "{N_nonmiss}","{mean}","{sd}",
+      "{median} ({p25}, {p75})",
+      "{min}, {max}"),
+    missing = "no",
+    label = Age ~ "Wiek") %>%
+  modify_header(label ~ "**Zmienna**") %>%
+  modify_caption("**Tabela 4. Wiek wg zdolności kredytowej.**") %>%
+  bold_labels() %>% 
+  add_p(pvalue_fun = ~ style_pvalue(.x, digits = 2))
+
+```
+
+INTERPRETACJA
+
+```{r, echo = FALSE}
+
+german_credit %>%
+  select(Duration_of_Credit,Creditability) %>%
+  tbl_summary(
+    by=Creditability,
+    type = all_continuous() ~ "continuous2",
+    statistic = all_continuous() ~ c(
+      "{N_nonmiss}","{mean}","{sd}",
+      "{median} ({p25}, {p75})",
+      "{min}, {max}"),
+    missing = "no",
+    label = Duration_of_Credit ~ "Długość trwania kredytu") %>%
+  modify_header(label ~ "**Zmienna**") %>%
+  modify_caption("**Tabela 5. Długość trwania kredytu wg zdolności kredytowej.**") %>%
+  bold_labels() %>% 
+  add_p(pvalue_fun = ~ style_pvalue(.x, digits = 2))
+
+```
+
+INTERPRETACJA
 
 ```{r, echo = FALSE}
 #mapa korelacji (heat mapa)
 
 german_credit <- german_credit1
-=======
-
-
->>>>>>> 69bc84c26d12c32aad570688205f11b35ee7ed60
 corrplot(cor(german_credit), method = "number", type = "upper", diag =FALSE)
 corr_matrix<-cor(german_credit)
 corrplot(corr_matrix, method="color")
 
 ```
 
+Najbardziej widoczny jest punkt Credit_Amount/Duration_of_credit co oznacza, że najbardziej skorelowana jest kwota kredytu z czasem kredytu. Następnie troche mniejsza korelacja Credits_at_this_Bank/Previous_Credit, co oznacza skorelowanie kredytów w tym banku z poprzednimi. Kolorem pomarańczowym jest ukazana ujemna korelacja i widać ją najlepiej między Instalment_rate/Credit_Amount.
 
-#Pytania badawcze
+## Wnioskowanie (testy statystyczne)
+
+### Pytania badawcze
 Czy zdolność kredytowa zależy od wielkości kredytu?
 Czy zdolność kredytowa zależy od wieku?
 Czy zdolność kredytowa zależy od liczby przepracowanych lat?
 Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?
 
-```{r}
+```{r, echo = FALSE}
 set.seed(123)
 
 ggbetweenstats(
   data = german_credit,
   x = Creditability,
   y = Credit_Amount,
-  title = "Czy zdolność kredytowa zależy od wielkości kredytu?"
+  title = "Wykres 8. Czy zdolność kredytowa zależy od wielkości kredytu?"
 )
 ```
 
-###Średnia wysokość pożyczki jest istotnie różna dla różnego poziomu ryzyka kredytowego
+Średnia wysokość pożyczki jest istotnie różna dla różnego poziomu ryzyka kredytowego.
 
-```{r}
+```{r, echo = FALSE}
 set.seed(123)
 
 ggbetweenstats(
   data = german_credit,
   x = Creditability,
   y = Age,
-  title = "Czy zdolność kredytowa zależy od wieku?"
+  title = "Wykres 9. Czy zdolność kredytowa zależy od wieku?"
 )
 ```
 
-###Średni wiek jest istotnie różny dla różnego poziomu ryzyka kredytowego
+Średni wiek jest istotnie różny dla różnego poziomu ryzyka kredytowego.
 
 
 
-```{r}
+```{r, echo = FALSE}
 set.seed(123)
 
 ggbarstats(
   data = german_credit,
   x = Creditability,
   y = Employment,
-  title = "Czy zdolność kredytowa zależy od liczby przepracowanych lat?"
+  title = "Wykres 10. Czy zdolność kredytowa zależy od liczby przepracowanych lat?"
   )
 ```
+Liczba przepracownaych lat istotnie wpływa na ryzyko kredytowe.
 
-
-###Liczba przepracownaych lat istotnie wpływa na ryzyko kredytowe.
-
-```{r}
+```{r, echo = FALSE}
 set.seed(123)
 
 ggpiestats(
   data = german_credit,
   x = Creditability,
   y = Credits_at_this_Bank,
-  title = "Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?"
+  title = "Wykres 11. Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?"
   )
 ```
-###P-value wynosi 0,45, więc zmienna "Ilość posiadanych kredytów w tym banku" nie jest istotna, co widać na wykresach: możemy zaobserwowac, że zdlonośc kredytowa we wszystkich czterech przypadkach znajduje się na bardzo zbliżonym poziomie.
+P-value wynosi 0,45, więc zmienna "Ilość posiadanych kredytów w tym banku" nie jest istotna, co widać na wykresach: możemy zaobserwować, że zdloność kredytowa we wszystkich czterech przypadkach znajduje się na bardzo zbliżonym poziomie.
+
+## Podsumowanie i wnioski końcowe
