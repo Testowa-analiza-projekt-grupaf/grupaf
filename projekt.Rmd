@@ -12,7 +12,6 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(include = FALSE)
 library(naniar)
 library(visdat)
 library(dlookr)
@@ -170,7 +169,7 @@ Tabela 1 pokazuje podział zmiennych na jakościowe i ilościowe.
 ## Wizualizacja danych
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning=FALSE}
 #Wykres dla account balance
 
 ggplot(german_credit, aes(Account_Balance, ..count..)) + 
@@ -182,7 +181,7 @@ ggplot(german_credit, aes(Account_Balance, ..count..)) +
 Na wykresie zależności zdolności kredytowej od stanu konta bankowego można zobaczyć zaskakujące wyniki, na przykład, że zdolność kredytowa osób, które nie posiadają konta bieżącego jest większa, niż osób, które go posiadają. To oznacza, że na zdolność kredytową wpływa nie tylko jedna zmienna oraz stan konta bankowego nie ma istotnego znaczenia w zwiększaniu zdolności kredytowej klientów.
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning=FALSE}
 ggplot(german_credit, aes(Employment, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -192,7 +191,7 @@ ggplot(german_credit, aes(Employment, ..count..)) +
 Powyższy wykres przedstawia zależność zdolności kredytowej od stażu pracy (ilości przepracowanych lat). Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategoriach z doświadczeniem zawodowym pomiędzy 1 a 4 lata lub większym niż 7.
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning=FALSE}
 ggplot(german_credit, aes(Previous_Credit, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -202,7 +201,7 @@ ggplot(german_credit, aes(Previous_Credit, ..count..)) +
 Wykres 5 przedstawia zależność zdolności kredytowej od ilości wcześniej zaciągniętych kredytów. Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategorii "Spłata terminowa, do teraz", to logiczne, ponieważ taka sytuacja pokazuje, że klient jest w stanie spłacać raty kredytowe w terminie. Ciekawy jest wynik w grupie osób z kontem krytycznym: prawie 250 zgłoszeń (co jest dość wysokim wynikiem) o kredyt zostały zaakceptowane, co oznacza, że w przypadku tych klientów inne zmienne były bardziej istotne, niż ilość wcześniejszych kredytów i stan konta przez to.
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning=FALSE}
 ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) + 
   geom_bar(aes(fill = Creditability), position = "dodge") +
   scale_fill_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
@@ -212,7 +211,7 @@ ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) +
 Wykres 6 przedstawia zależność zdolności kredytowej od zaciągniętych kredytów w danym banku. Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategorii "1" i "2". Najwięcej klientów ma zdolność kredytową przy jednym kredycie. Im większa ilość kredytów, tym mniejsza ilość klientów. Przy 4 zaciągniętych kredytach ilość klientów jest praktycznie zerowa. To jest również bardzo logiczne, jak w przypadku poprzedniego wykresu, bo zaciągnięte wcześniej kredyty (nie więcej niż dwa) pokazują, że klient jest w stanie spłacać raty kredytowe w terminie.
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning=FALSE}
 ggplot(german_credit, aes(Age)) +
   geom_line(stat = "count", aes(color = factor(Creditability))) +
   scale_color_manual(values = c("lightblue", "plum"), name = "Zdolność kredytowa") +
