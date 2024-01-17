@@ -101,9 +101,6 @@ W analizowanym przez nas zbiorze danych każda obserwacja reprezentuje osobę, k
 ```{r german-credit, echo = FALSE}
 #Walidacja danych
 german_credit <- german_credit1
-any_na(german_credit)
-n_miss(german_credit) # CZY ZOSTAWIC
-prop_miss(german_credit)
 
 vis_miss(german_credit)
 miss_var_summary(german_credit)
@@ -172,19 +169,10 @@ tabela1 <- data.frame(
 )
 kable(tabela1, col.names = c("Nazwa zmiennej", "Typ zmiennej"), align="cc", caption = "Tabela 1. Podział zmiennych na jakościowe oraz ilościowe")
 
-#PRZETŁUMACZYC NAZWY + DODAC KOD
 ```
 
 Tabela 1 pokazuje podział zmiennych na jakościowe i ilościowe.
 
-```{r}
-# nie wiem czy to nam trzeba (jak to interpretowac XD)
-ggplot(german_credit, aes(x= Liczba_obserwacji <-c(1:1000), fill= Creditability)) +
-  geom_density(alpha=.25) +
-  labs(title = 'Gęstość rozkładu zdolności kredytowej') 
-
-#NA RAZIE NIE INTERPRETUJEMY JEŻELI ZOSTAWIAMY TO POZMIENIAĆ NR WYKRESÓW
-```
 
 ## Wizualizacja danych
 
@@ -255,7 +243,7 @@ kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), a
 
 Tabela 2 przedstawia porównanie dobrego i złego klienta według ich cech. 
 Według tabeli dobrym klientem jest osoba w wieku nie wyżej niż 55 lat, ilość zaciągnietych kredytów przez którą jest mniejsza lub równa się dwóm, środki na koncie przewyższają 200 marek niemieckich, pracowała 3 lata lub więcej oraz miała wcześniej zaciągnięte kredyty, które zostały spłacone w terminie, lub nie miała ich wcale. 
-Natomiast złym klientem jest osoba w wieku wyższym niż 55 lat, ilość zaciągnietych kredytów przez którą przewyzsza dwa, któa posiada brak środków na koncie, pracowała mniej niż 3 lata oraz miała wcześniej zaciągnięte kredyty, które nie zostały spłacone w terminie, lub posiada konto krytyczne.  
+Natomiast złym klientem jest osoba w wieku wyższym niż 55 lat, ilość zaciągnietych kredytów przez którą przewyższa dwa, która posiada brak środków na koncie, pracowała mniej niż 3 lata oraz miała wcześniej zaciągnięte kredyty, które nie zostały spłacone w terminie, lub posiada konto krytyczne.  
 
 ## Analiza opisowa
 
@@ -367,11 +355,11 @@ Widzimy, że najwyższa korelacja (zaznaczona na niebiesko) występuję pomiędz
 
 ## Wnioskowanie (testy statystyczne)
 
-### Pytania badawcze
-Czy zdolność kredytowa zależy od wielkości kredytu?
-Czy zdolność kredytowa zależy od wieku?
-Czy zdolność kredytowa zależy od liczby przepracowanych lat?
-Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?
+Pytania badawcze:
+1.Czy zdolność kredytowa zależy od wielkości kredytu?
+2.Czy zdolność kredytowa zależy od wieku?
+3.Czy zdolność kredytowa zależy od liczby przepracowanych lat?
+4.Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?
 
 ```{r, echo = FALSE}
 set.seed(123)
