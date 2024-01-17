@@ -108,7 +108,7 @@ miss_var_summary(german_credit)
 ```
 
 
-Walidacja danych pokazuje, że nie mamy żadnych braków oraz dane nie wymagają czyszczenia.
+Walidacja danych pokazuje, że nie ma braków danych oraz dane nie wymagają czyszczenia.
 
 ```{r german-credit, echo = FALSE}
 
@@ -123,16 +123,16 @@ german_credit %>%
        title = "Wykres 1. Brak danych ze względu na cel kredytu")
 ```
 
-Nie mamy braku danych ze względu na zaciągniecia kredytu.
+Nie ma braku danych ze względu na cel kredytu.
 
 
 ```{r german-credit, echo = FALSE}
 # Sprawdzanie czy zmienna age nie jest ujemna
 
-hist(german_credit$Age, main = "Wykres 2. Wiek klientów") 
+hist(german_credit$Age, main = "Wykres 2. Wiek klientów", xlab = "Wiek", ylab = "Częstotliwość") 
 ```
 
-Według otrzymanych wartości możemy stwierdzić, że nie mamy ujemnej wartości zmiennej AGE.
+Na wykresie 2 został przedstawiony wiek klientów. Ze względu na brak wartości ujemnych, możemy stwierdzić, że dane są poprawne.
 
 
 ```{r, echo = FALSE}
@@ -186,7 +186,7 @@ ggplot(german_credit, aes(Account_Balance, ..count..)) +
   labs(x = "Środki na koncie", y = "Ilość klientów", title = "Wykres 3. Zalezność zdolności kredytowej od stanu konta bankowego")
 ```
 
-Na wykresie zależności zdolności kredytowej od stanu konta bankowego można zobaczyć zaskakujące wyniki, na przykład, że zdolność kredytowa osób które nie posiadają konta biezącego jest większa, niż osób, które go posiadają. To oznacza, że na zdolność kredytową wpływa nie tylko jedna zmienna oraz stan konta bankowego nie ma istotnego znaczenia w zwiększaniu zdolności kredytowej klientów.
+Na wykresie zależności zdolności kredytowej od stanu konta bankowego można zobaczyć zaskakujące wyniki, na przykład, że zdolność kredytowa osób, które nie posiadają konta bieżącego jest większa, niż osób, które go posiadają. To oznacza, że na zdolność kredytową wpływa nie tylko jedna zmienna oraz stan konta bankowego nie ma istotnego znaczenia w zwiększaniu zdolności kredytowej klientów.
 
 
 ```{r, echo = FALSE}
@@ -196,7 +196,7 @@ ggplot(german_credit, aes(Employment, ..count..)) +
   labs(x = "Zatrudnienie", y = "Ilość klientów", title = "Wykres 4. Zalezność zdolności kredytowej od zatrudnienia")
 ```
 
-Powyższy wykres przedstawia zależność zdolności kredytowej od stażu pracy (ilości przepracowanych lat). Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategoriach z doświadczeniem zawodowe pomiędzy 1 a 4 lata lub większym niż 7.
+Powyższy wykres przedstawia zależność zdolności kredytowej od stażu pracy (ilości przepracowanych lat). Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategoriach z doświadczeniem zawodowym pomiędzy 1 a 4 lata lub większym niż 7.
 
 
 ```{r}
@@ -206,7 +206,7 @@ ggplot(german_credit, aes(Previous_Credit, ..count..)) +
   labs(x = "Wcześniej zaciągnięte kredyty", y = "Ilość klientów", title = "Wykres 5. Zalezność zdolności kredytowej od wcześniej zaciągniętych kredytów")
 ```
 
-Wykres 5 przedstawia zależność zdolności kredytowej od ilości wcześniej zaciągniętych kredytów. Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategorii "Spłata terminowa, do teraz", to logiczne, ponieważ taka sytuacja pokazuje, że klient jest w stanie spłacać raty kredytowe w terminie. Ciekawy jest wynik w grupie osób z kontem krytycznym: prawie 250 zgłoszeń (co jest dość wysokim wynikikem) o kredyt zostały zaakceptowane, co oznacza, że w przypadku tych klientów inne zmienne były bardziej istotne, niż ilość wcześniejszych kredytów i stan konta przez to.
+Wykres 5 przedstawia zależność zdolności kredytowej od ilości wcześniej zaciągniętych kredytów. Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategorii "Spłata terminowa, do teraz", to logiczne, ponieważ taka sytuacja pokazuje, że klient jest w stanie spłacać raty kredytowe w terminie. Ciekawy jest wynik w grupie osób z kontem krytycznym: prawie 250 zgłoszeń (co jest dość wysokim wynikiem) o kredyt zostały zaakceptowane, co oznacza, że w przypadku tych klientów inne zmienne były bardziej istotne, niż ilość wcześniejszych kredytów i stan konta przez to.
 
 
 ```{r, echo = FALSE}
@@ -216,7 +216,7 @@ ggplot(german_credit, aes(Credits_at_this_Bank, ..count..)) +
   labs(x = "Zaciągnięte kredyty w danym banku", y = "Ilość klientów", title = "Wykres 6. Zalezność zdolności kredytowej od zaciągniętych kredytów w danym banku")
 ```
 
-Wykres 6 przedstawia zależność zdolności kredytowej od zaciągniętych kredytów w danym banku. Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategorii "1" i "2". Najwięcej klientów ma zdolność kredytową przy jednym kredycie. Im większa ilość kredytów tym mniejsza ilość klientów. Przy 4 zaciągnietych kredytach ilość klientów jest praktycznie zerowa. To jest również bardzo logiczne, jak w przypadku poprzedniego wykresu, bo zaciągnięte wcześniej kredyty (nie więcej niż dwa) pokazują, że klient jest w stanie spłacać raty kredytowe w terminie.
+Wykres 6 przedstawia zależność zdolności kredytowej od zaciągniętych kredytów w danym banku. Widzimy, że najwięcej osób zdolnych kredytowo, jest w kategorii "1" i "2". Najwięcej klientów ma zdolność kredytową przy jednym kredycie. Im większa ilość kredytów, tym mniejsza ilość klientów. Przy 4 zaciągniętych kredytach ilość klientów jest praktycznie zerowa. To jest również bardzo logiczne, jak w przypadku poprzedniego wykresu, bo zaciągnięte wcześniej kredyty (nie więcej niż dwa) pokazują, że klient jest w stanie spłacać raty kredytowe w terminie.
 
 
 ```{r, echo = FALSE}
@@ -226,7 +226,7 @@ ggplot(german_credit, aes(Age)) +
   labs(x = "Wiek klientów", y = "Ilość klientów", title = "Wykres 7. Zależność zdolności kredytowej od wieku klientów")
 ```
 
-Wykres 7 przedstawia zależność zdolności kredytowej od wieku klientów. Największa zdolność kredytowa jest między 25, a 45 rokiem życia. Od ok. 40 roku życia spada, z kilkoma małymi odbiciami i jednym większym w okolicach 65 roku.
+Wykres 7 przedstawia zależność zdolności kredytowej od wieku klientów. Największa zdolność kredytowa jest między 25 a 45 rokiem życia. Od ok. 40 roku życia spada, z kilkoma małymi odbiciami i jednym większym w okolicach 65 roku.
 
 ```{r, echo = FALSE}
 # dobry i zły klient tabelka porównanie
@@ -242,8 +242,8 @@ kable(tabela_klientow_transpose, col.names = c("Dobry klient", "Zły klient"), a
 ```
 
 Tabela 2 przedstawia porównanie dobrego i złego klienta według ich cech. 
-Według tabeli dobrym klientem jest osoba w wieku nie wyżej niż 55 lat, ilość zaciągnietych kredytów przez którą jest mniejsza lub równa się dwóm, środki na koncie przewyższają 200 marek niemieckich, pracowała 3 lata lub więcej oraz miała wcześniej zaciągnięte kredyty, które zostały spłacone w terminie, lub nie miała ich wcale. 
-Natomiast złym klientem jest osoba w wieku wyższym niż 55 lat, ilość zaciągnietych kredytów przez którą przewyższa dwa, która posiada brak środków na koncie, pracowała mniej niż 3 lata oraz miała wcześniej zaciągnięte kredyty, które nie zostały spłacone w terminie, lub posiada konto krytyczne.  
+Według tabeli dobrym klientem jest osoba w wieku nie wyżej niż 55 lat, ilość zaciągniętych kredytów jest mniejsza lub równa się dwóm, środki na koncie przewyższają 200 marek niemieckich, pracowała 3 lata lub więcej oraz miała wcześniej zaciągnięte kredyty, które zostały spłacone w terminie, lub nie miała ich wcale. 
+Natomiast złym klientem jest osoba w wieku wyższym niż 55 lat, ilość zaciągniętych kredytów przewyższa dwa, która posiada brak środków na koncie, pracowała mniej niż 3 lata oraz miała wcześniej zaciągnięte kredyty, które nie zostały spłacone w terminie, lub posiada konto krytyczne.  
 
 ## Analiza opisowa
 
@@ -271,11 +271,11 @@ german_credit %>%
 Tabela 3 przedstawia statystyki dotyczące kwoty zaciągniętego kredytu wg zdolności kredytowej. Ilość zaakceptowanych zgłoszeń o kredyt wynosi 700, natomiast odrzuconych - 300. 
 W grupie zaakceptowanych zgłoszeń:
 - Średnia kwota kredytu wynosi - 2985
-- Najmniejsza kwota - 250 ; najwieksza kwota - 15857
+- Najmniejsza kwota - 250 ; największa kwota - 15857
 W grupie odrzuconych zgłoszeń:
 - Średnia kwota kredytu wynosi - 3938
-- Najmniejsza kwota - 433 ; najwieksza kwota - 18424
-Na podstawie powyższych danych możemy załozyć, że większość wniosków była odrzucona przez wysokie kwoty kredytów, które najprawdopodobniej przewyższały dochód potencjalnych klientów w okresie na który kredyt był by zaciągnięty.
+- Najmniejsza kwota - 433 ; największa kwota - 18424
+Na podstawie powyższych danych możemy założyć, że większość wniosków była odrzucona przez wysokie kwoty kredytów, które najprawdopodobniej przewyższały dochód potencjalnych klientów w okresie, na który kredyt byłby zaciągnięty.
 
 
 ```{r, echo = FALSE}
@@ -337,7 +337,7 @@ W grupie zaakceptowanych zgłoszeń:
 W grupie odrzuconych zgłoszeń:
 - Średnia długość trwania kredytu wynosiła 25 miesięcy
 - Najkrótszy okres trwania kredytu wyniósł 6 miesięcy ; najdłuższy - 72
-Na podstawie powyższych danych możemy stwierdzić, że okres trwania kredytów, zgłoszenia o które zostały odrzucone, był dłuższy, niż okres trwania kredytow udzeilonych.
+Na podstawie powyższych danych możemy stwierdzić, że okres trwania kredytów, zgłoszenia o które zostały odrzucone, był dłuższy, niż okres trwania kredytów udzielonych.
 
 
 ```{r, echo = FALSE}
@@ -350,8 +350,8 @@ corrplot(corr_matrix, method="color")
 
 ```
 
-Powyżej jest przedstawiona mapa korelacji (zwana również heatmapą), która przedstawia stopień korelacji między różnymi zmeinnymi w zestawie danych.Korelacja mierzy, w jaki sposób zmiany jednej zmiennej są związane ze zmianami innej zmiennej. Mapa korelacji pozwala wizualnie zidentyfikować wzorce i relacje między danymi.
-Widzimy, że najwyższa korelacja (zaznaczona na niebiesko) występuję pomiędzy: czasem trwania kredytu a kwotą kredytu; ilością kredytów zaciągniętych w danycm banku a wcześńiej zaciągniętymi kredytami; kwotą kredytu a zdolnością kredytową. Ujemna korelacja (zaznaczona na pomaranczowo) widoczna jest pomiędzy: zdolnością kredytową a czasem trwania kredytu, ratą kredytu a kwotą kredytu. Korelacja wynosi 0, czyli nie nie występuje pomiędzy zmiennymi, pary których zazanaczone białym kolorem.
+Powyżej jest przedstawiona mapa korelacji (zwana również heatmapą), która przedstawia stopień korelacji między różnymi zmiennymi w zestawie danych. Korelacja mierzy, w jaki sposób zmiany jednej zmiennej są związane ze zmianami innej zmiennej. Mapa korelacji pozwala wizualnie zidentyfikować wzorce i relacje między danymi.
+Widzimy, że najwyższa korelacja (zaznaczona na niebiesko) występuję pomiędzy: czasem trwania kredytu a kwotą kredytu; ilością kredytów zaciągniętych w danym banku a wcześniej zaciągniętymi kredytami; kwotą kredytu a zdolnością kredytową. Ujemna korelacja (zaznaczona na pomarańczowo) widoczna jest pomiędzy: zdolnością kredytową a czasem trwania kredytu, ratą kredytu a kwotą kredytu. Korelacja wynosi 0, czyli nie występuje pomiędzy zmiennymi, pary których zaznaczone białym kolorem.
 
 ## Wnioskowanie (testy statystyczne)
 
@@ -398,7 +398,8 @@ ggbarstats(
   title = "Wykres 10. Czy zdolność kredytowa zależy od liczby przepracowanych lat?"
   )
 ```
-Na wykresie 10 widzimy, że liczba przepracownaych lat istotnie wpływa na ryzyko kredytowe.
+
+Na wykresie 10 widzimy, że liczba przepracowanych lat istotnie wpływa na ryzyko kredytowe.
 
 ```{r, echo = FALSE}
 set.seed(123)
@@ -410,13 +411,14 @@ ggpiestats(
   title = "Wykres 11. Czy zdolność kredytowa zależy od ilości posiadanych kredytów w tym banku?"
   )
 ```
-P-value wynosi 0,45, więc zmienna "Ilość posiadanych kredytów w tym banku" nie jest istotna. Na wykresach widzimy, że zdloność kredytowa we wszystkich czterech przypadkach znajduje się na bardzo zbliżonym poziomie.
+
+P-value wynosi 0,45, więc zmienna "Ilość posiadanych kredytów w tym banku" nie jest istotna. Na wykresach widzimy, że zdoloność kredytowa we wszystkich czterech przypadkach znajduje się na bardzo zbliżonym poziomie.
 
 ## Podsumowanie i wnioski końcowe
 
 Dany projekt miał na celu analizę zbioru danych reprezentującego osoby, które zaciągnęły kredyt w banku w walucie marki niemieckiej. Zbiór składał się z 1000 obserwacji, zawierających 20 zmiennych objaśniających oraz zmienną objaśnianą - Creditability, która opisuje, czy dana osoba jest dobrym czy złym klientem bankowym na podstawie zdolności kredytowej.
 
-W trakcie analizy danych przeprowadzono szereg kroków mających na celu zrozumienie i wydobycie istotnych informacji. Zastosowano metody wizualizacji danych, takie jak heatmapy korelacji, które pozwoliły zidentyfikować potencjalne zależności między zmiennymi. Ponadto, przeprowadzono analizę statystyczną, identyfikując istotne cechy charakteryzujące zarówno dobrych, jak i złych klientów.
+W trakcie analizy danych przeprowadzono szereg kroków mających na celu zrozumienie i wydobycie istotnych informacji. Zastosowano metody wizualizacji danych, takie jak heatmapy korelacji, które pozwoliły zidentyfikować potencjalne zależności między zmiennymi. Ponadto przeprowadzono analizę statystyczną, identyfikując istotne cechy charakteryzujące zarówno dobrych, jak i złych klientów.
 
 Najważniejsze wyniki analizy obejmują:
 
@@ -428,4 +430,4 @@ Najważniejsze wyniki analizy obejmują:
 
 Wnioski płynące z analizy danych są cennym źródłem informacji dla instytucji finansowych. Dają one podstawy do podejmowania bardziej świadomych decyzji w zakresie zarządzania ryzykiem kredytowym, optymalizacji procedur przyznawania kredytów oraz dostosowywania oferty do specyfiki klientów.
 
-Podkreślenie istotnych cech klientów o wysokiej zdolności kredytowej umożliwia dostosowanie strategii marketingowej oraz zwiększenie efektywności procesu kredytowego. W rezultacie, bank może lepiej spełniać oczekiwania klientów, jednocześnie minimalizując ryzyko związane z udzielaniem kredytów. Analiza ta stanowi solidną podstawę do dalszych badań i działań w obszarze zarządzania ryzykiem kredytowym.
+Podkreślenie istotnych cech klientów o wysokiej zdolności kredytowej umożliwia dostosowanie strategii marketingowej oraz zwiększenie efektywności procesu kredytowego. W rezultacie bank może lepiej spełniać oczekiwania klientów, jednocześnie minimalizując ryzyko związane z udzielaniem kredytów. Analiza ta stanowi solidną podstawę do dalszych badań i działań w obszarze zarządzania ryzykiem kredytowym.
